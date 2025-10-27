@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DataInteraction</string>
+    <string name="default_web_client_id">960124994825-lh52dhdvd7969nlhle8sv50bgl5655or.apps.googleusercontent.com</string>
+
 </resources>
