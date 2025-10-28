@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
-
 }
 
 android {
@@ -28,24 +27,39 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
 }
 
 dependencies {
-    // BOM quản lý version đồng bộ cho Firebase
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    // OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    // Image Picker
+    implementation("com.github.Dhaval2404:ImagePicker:2.1")
+
+    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
-
-    // Firebase Auth
     implementation("com.google.firebase:firebase-auth-ktx")
-
-    // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.6.0")
+
+    // AndroidX & Material
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -57,12 +71,13 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-
 }
+
 configurations.all {
     resolutionStrategy {
         // Buộc Gradle dùng version mới, loại bỏ version cũ
@@ -70,3 +85,6 @@ configurations.all {
         force("com.google.firebase:firebase-common:21.0.0")
     }
 }
+
+// **Không khai báo repositories ở đây nữa**
+// Gradle sẽ dùng repository từ settings.gradle.kts
