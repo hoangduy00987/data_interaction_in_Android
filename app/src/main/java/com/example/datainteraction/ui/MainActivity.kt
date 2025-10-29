@@ -33,8 +33,17 @@ class MainActivity : AppCompatActivity() { // Giả sử đây là Activity sau 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         productList = mutableListOf()
-        adapter = ProductAdapter(productList)
+        adapter = ProductAdapter(productList) { product ->
+            val intent = Intent(this, AddProductActivity::class.java)
+            intent.putExtra("product_id", product.id)
+            intent.putExtra("product_name", product.name)
+            intent.putExtra("product_price", product.price)
+            intent.putExtra("product_description", product.description)
+            intent.putExtra("product_image", product.image)
+            addProductLauncher.launch(intent) // dùng launcher để nhận result
+        }
         recyclerView.adapter = adapter
+
 
         loadProducts()
         val signOutButton = findViewById<Button>(R.id.logout_button)
@@ -52,9 +61,20 @@ class MainActivity : AppCompatActivity() { // Giả sử đây là Activity sau 
     private val addProductLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                loadProducts()
+                val updatedProduct = result.data?.getSerializableExtra("updated_product") as? Product
+                updatedProduct?.let { product ->
+                    val index = productList.indexOfFirst { it.id == product.id }
+                    if (index != -1) {
+                        productList[index] = product
+                        adapter.notifyItemChanged(index) // cập nhật item
+                    } else {
+                        productList.add(product)
+                        adapter.notifyItemInserted(productList.size - 1)
+                    }
+                } ?: loadProducts() // fallback: load lại toàn bộ nếu null
             }
         }
+
     private fun loadProducts() {
         RetrofitClient.instance.getProducts().enqueue(object : Callback<List<Product>> {
             override fun onResponse(
